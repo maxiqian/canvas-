@@ -8,25 +8,42 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="canvas"></div>
+    <canvas id="canvas" width="100" height="100"></canvas>
     <script>
-        canvas.onclick = (e) => {
-            console.log(e);
-            console.log(e.clientX);
-            console.log(e.clientY);
-            let div = document.createElement('div');
-            div.style.position='absolute';
-            div.style.left = e.clientX+'px';
-            div.style.top = e.clientY+'px';
-            // div.style.border = '1px solid red';
-            div.style.width ='6px';
-            div.style.height = '6px';
-            div.style.marginLeft='-3px';
-            div.style.marginTop='-3px';
-            div.style.borderRadius='50%';
-            div.style.backgroundColor='black';
-            canvas.appendChild(div);
-                }
+        // 用canvas画线
+        let canvas = document.getElementById("canvas");
+        // canvas这个盒子的宽度高度等于文档的宽度高度
+        // document.documentElement.clientWidth 获取文档宽度
+        // document.documentElement.clientHeight 获取文档高度
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+        let ctx = canvas.getContext("2d");
+        let painting = false;
+        ctx.fillStyle = "black";
+        ctx.strokeStyle='none';
+        // 如果鼠标按下就可以画线
+        canvas.onmousedown=()=>{
+            painting = true;
+        }
+        canvas.onmousemove=(e)=>{
+            if(painting===true){
+        // 矩形 ctx.fillRect(left，top，宽度，高度)
+        // -5是为了让小正方形在鼠标的中间，小正方形的宽高都是10
+        // ctx.fillRect (e.clientX-5, e.clientY-5, 10, 10);
+        // 圆形 
+             ctx.beginPath();
+            //  cts.arc(圆心x轴坐标，圆心y轴坐标，半径，角度，2*Math.PI)
+             ctx.arc(e.clientX,e.clientY,10,0,2*Math.PI);
+             ctx.stroke();
+            //  上面有fillStyle圆就可以有颜色
+             ctx.fill();
+            }else{
+                console.log('什么都不能画');
+            }
+            canvas.onmouseup=()=>{
+                painting=false;
+            }
+        }
     </script>
 </body>
 </html>
