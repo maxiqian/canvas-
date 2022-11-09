@@ -18,32 +18,60 @@
         canvas.width = document.documentElement.clientWidth;
         canvas.height = document.documentElement.clientHeight;
         let ctx = canvas.getContext("2d");
-        let painting = false;
         ctx.fillStyle = "black";
-        ctx.strokeStyle='none';
-        // 如果鼠标按下就可以画线
-        canvas.onmousedown=()=>{
+        ctx.strokeStyle='black';
+        // 线的粗细
+        ctx.lineWidth = 10;
+        // 线的末尾是圆形的
+        ctx.lineCap = 'round';
+        
+        let painting = false;
+        // 记录上一次的点
+        let last;
+      function drawLine(x1,y1,x2,y2){
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+        // drawLine(0,0,500,500);
+    // js是否支持触屏
+    var isTouchDevice = 'ontouchstart' in document.documentElement;
+       //    console.log(isTouchDevice);
+    if(isTouchDevice){
+        canvas.ontouchstart=(e)=>{
+           let x = e.touches[0].clientX;
+           let y = e.touches[0].clientY;
+           last=[x,y];
+        }
+        canvas.ontouchmove=(e)=>{
+            // 触摸的时候会有多个手指，touches 第一个手指触摸的是touches[0]
+           let x = e.touches[0].clientX;
+           let y = e.touches[0].clientY;
+           drawLine(last[0],last[1],x,y);
+                // last等于此时鼠标经过的点
+                last=[x,y];
+        }
+    }else{
+         // 如果鼠标按下就可以画线
+         canvas.onmousedown=(e)=>{
             painting = true;
+            // last起初等于鼠标按下的点
+            last = [e.clientX,e.clientY];
         }
         canvas.onmousemove=(e)=>{
             if(painting===true){
-        // 矩形 ctx.fillRect(left，top，宽度，高度)
-        // -5是为了让小正方形在鼠标的中间，小正方形的宽高都是10
-        // ctx.fillRect (e.clientX-5, e.clientY-5, 10, 10);
-        // 圆形 
-             ctx.beginPath();
-            //  cts.arc(圆心x轴坐标，圆心y轴坐标，半径，角度，2*Math.PI)
-             ctx.arc(e.clientX,e.clientY,10,0,2*Math.PI);
-             ctx.stroke();
-            //  上面有fillStyle圆就可以有颜色
-             ctx.fill();
+                drawLine(last[0],last[1],e.clientX,e.clientY);
+                // last等于此时鼠标经过的点
+                last=[e.clientX,e.clientY]
             }else{
                 console.log('什么都不能画');
             }
-            canvas.onmouseup=()=>{
+        }
+        canvas.onmouseup=()=>{
                 painting=false;
             }
-        }
+    }
     </script>
 </body>
 </html>
